@@ -1,4 +1,4 @@
-#Grab the latest alpine image
+#Grab the latest alpine imag
 FROM python:3.13.0a2-alpine
 
 # Install python and pip
