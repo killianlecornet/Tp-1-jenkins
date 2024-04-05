@@ -3,7 +3,7 @@ FROM python:3.13.0a2-alpine
 
 # Install python and pip
 RUN apk add --no-cache --update python3 py3-pip bash
-ADD ./webapp/requirements.txt /tmp/requirements.txt
+ADD ./website_karma-main/requirements.txt /tmp/requirements.txt
 
 # Create a virtual environment and activate it
 RUN python3 -m venv /opt/venv
@@ -13,8 +13,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -q -r /tmp/requirements.txt
 
 # Add our code
-ADD ./webapp /opt/webapp/
-WORKDIR /opt/webapp
+ADD ./website_karma-main /opt/website_karma-main/
+WORKDIR /opt/website_karma-main
 
 # Expose is NOT supported by Heroku
 # EXPOSE 5000         
