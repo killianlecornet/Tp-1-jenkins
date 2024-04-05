@@ -52,13 +52,13 @@ pipeline {
     post {
         success {
             // Envoyer une notification par email en cas de succès
-            mail to: 'notif-jenkins@joelkoussawo.me',
+            mail to: 'killian.lecornet@ynov.com',
                  subject: "Succès du Pipeline ${env.JOB_NAME} ${env.BUILD_NUMBER}",
                  body: "Le pipeline a réussi. L'application a été déployée."
         }
         failure {
             // Envoyer une notification par email en cas d'échec
-            mail to: 'notif-jenkins@joelkoussawo.me',
+            mail to: 'killian.lecornet@ynov.com',
                  subject: "Échec du Pipeline ${env.JOB_NAME} ${env.BUILD_NUMBER}",
                  body: "Le pipeline a échoué. Veuillez vérifier Jenkins pour plus de détails."
         }
