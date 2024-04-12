@@ -8,6 +8,7 @@ pipeline {
         IMAGE_TAG = "latest"
         DOCKERHUB_PASSWORD = "${DOCKERHUB_PASSWORD_PSW}"
         RENDER_API_TOKEN = credentials('RENDER_API_TOKEN')
+        RENDER_SERVICE_ID = "srv-cockhsa1hbls73csl2o0"
     }
 
     triggers {
@@ -42,16 +43,22 @@ pipeline {
                 }
             }
         }
-
-        // stage('Deploy') {
-        //     steps {
-        //         script {
-        //             sh 'curl -H "Authorization: Bearer ${RENDER_API_TOKEN}" -H "Content-Type: application/json" \
-        //                 -d "{\"serviceId\": \"${SERVICE_ID}\", \"imageName\": \"${ID_DOCKER}/${IMAGE_NAME}:${IMAGE_TAG}\"}" \
-        //                 https://api.render.com/deploy'
-        //         }
-        //     }
-        // }
+            stage('Deploy to Render') {
+                        steps {
+                            script {
+                                // Déclencher le redéploiement sur Render via leur API
+                                sh """
+                                curl -X POST 'https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys' \
+                                -H 'Authorization: Bearer ${RENDER_API_KEY}' \
+                                -H 'Content-Type: application/json' \
+                                -d '{
+                                    \"force\": true,  // Force le redéploiement même si aucune nouvelle image n'est disponible
+                                    \"clearCache\": true  // Optionnel: supprime le cache pour le déploiement
+                                }'
+                                """
+                            }
+                        }
+                    }
     }
 
     post {
