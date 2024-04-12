@@ -2,15 +2,17 @@ pipeline {
     agent any
 
     environment {
-        // Assurez-vous de configurer ces variables dans Jenkins ou dans le Jenkinsfile
+        // Variables d'environnement nécessaires
         ID_DOCKER = "${ID_DOCKER_PARAMS}"
         IMAGE_NAME = "website-karma"
         IMAGE_TAG = "latest"
         DOCKERHUB_PASSWORD = "${DOCKERHUB_PASSWORD_PSW}"
+        RENDER_API_TOKEN = credentials('render_api_token') // Assurez-vous d'ajouter ceci dans Jenkins Credentials
+        SERVICE_ID = "votre_service_id_render" // Remplacez ceci par l'ID de votre service sur Render
     }
 
     triggers {
-        // Vérifie le dépôt pour des changements toutes les 5 minutes
+        // Vérifie le dépôt pour des changements toutes les 2 minutes
         pollSCM('H/2 * * * *')
     }
 
@@ -26,7 +28,6 @@ pipeline {
         stage('Test image') {
             steps {
                 script {
-                    // Insérez vos commandes de test ici
                     echo "Exécution des tests"
                 }
             }
@@ -43,22 +44,23 @@ pipeline {
             }
         }
 
-            stage('Deploy') {
-                steps {
-                    script {
-                        // Exemple de commande CLI pour déployer sur Render, adaptez selon votre configuration
-                        sh 'render deploy -s service-id -t $RENDER_API_TOKEN'
-                    }
+        stage('Deploy') {
+            steps {
+                script {
+                    // Commande pour déployer sur Render, à adapter selon votre setup et les instructions de Render
+                    sh 'curl -H "Authorization: Bearer ${RENDER_API_TOKEN}" -H "Content-Type: application/json" \
+                        -d "{\"serviceId\": \"${SERVICE_ID}\", \"imageName\": \"${ID_DOCKER}/${IMAGE_NAME}:${IMAGE_TAG}\"}" \
+                        https://api.render.com/deploy'
                 }
             }
-
+        }
     }
 
     post {
         success {
             mail to: 'killian.lecornet@ynov.com',
                  subject: "Succès du Pipeline ${env.JOB_NAME} ${env.BUILD_NUMBER}",
-                 body: "Le pipeline a réussi. L'application a été déployée."
+                 body: "Le pipeline a réussi. L'application a été déployée sur Render."
         }
         failure {
             mail to: 'killian.lecornet@ynov.com',
