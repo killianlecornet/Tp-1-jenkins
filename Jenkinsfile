@@ -44,27 +44,16 @@ pipeline {
             }
         }
 
-        stage('Prepare Deployment') {
-            steps {
-                script {
-                    writeFile file: 'payload.json', text: '''{
-                        "force": true,
-                        "clearCache": true
-                    }'''
-                }
-            }
-        }
-
         stage('Deploy to Render') {
             steps {
                 script {
+                    // Utiliser la chaîne JSON directement dans la commande curl
                     sh '''
-                    curl -X POST "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
-                    -H "Authorization: Bearer $RENDER_API_TOKEN" \
+                    curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+                    -H "Authorization: Bearer ${RENDER_API_TOKEN}" \
                     -H "Content-Type: application/json" \
-                    -d @payload.json
+                    -d '{"force": true, "clearCache": true}'
                     '''
-                    sh 'rm -f payload.json'
                 }
             }
         }
