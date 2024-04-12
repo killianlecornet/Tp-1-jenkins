@@ -44,16 +44,14 @@ pipeline {
             }
         }
 
-        stage('Deploy to Render') {
+stage('Deploy to Render') {
             steps {
                 script {
-                    // Utiliser la chaîne JSON directement dans la commande curl
-                    sh '''
-                    curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
-                    -H "Authorization: Bearer ${RENDER_API_TOKEN}" \
-                    -H "Content-Type: application/json" \
-                    -d '{"force": true, "clearCache": true}'
-                    '''
+                    // Utiliser l'échappement complet des guillemets pour le JSON
+                    sh "curl -X POST 'https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys' " +
+                       "-H 'Authorization: Bearer ${RENDER_API_TOKEN}' " +
+                       "-H 'Content-Type: application/json' " +
+                       "-d '{\"force\": true, \"clearCache\": true}'"
                 }
             }
         }
