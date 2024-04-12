@@ -44,16 +44,15 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    // Commande pour déployer sur Render, à adapter selon votre setup et les instructions de Render
-                    sh 'curl -H "Authorization: Bearer ${RENDER_API_TOKEN}" -H "Content-Type: application/json" \
-                        -d "{\"serviceId\": \"${SERVICE_ID}\", \"imageName\": \"${ID_DOCKER}/${IMAGE_NAME}:${IMAGE_TAG}\"}" \
-                        https://api.render.com/deploy'
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         script {
+        //             sh 'curl -H "Authorization: Bearer ${RENDER_API_TOKEN}" -H "Content-Type: application/json" \
+        //                 -d "{\"serviceId\": \"${SERVICE_ID}\", \"imageName\": \"${ID_DOCKER}/${IMAGE_NAME}:${IMAGE_TAG}\"}" \
+        //                 https://api.render.com/deploy'
+        //         }
+        //     }
+        // }
     }
 
     post {
