@@ -46,16 +46,16 @@ pipeline {
             stage('Deploy to Render') {
                         steps {
                             script {
-                                // Déclencher le redéploiement sur Render via leur API
                                 sh """
-                                curl -X POST 'https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys' \
-                                -H 'Authorization: Bearer ${RENDER_API_TOKEN}' \
-                                -H 'Content-Type: application/json' \
+                                curl -X POST 'https://api.render.com/v1/services/${env.RENDER_SERVICE_ID}/deploys' \\
+                                -H 'Authorization: Bearer ${RENDER_API_TOKEN}' \\
+                                -H 'Content-Type: application/json' \\
                                 -d '{
-                                    \"force\": true,  // Force le redéploiement même si aucune nouvelle image n'est disponible
-                                    \"clearCache\": true  // Optionnel: supprime le cache pour le déploiement
+                                    \"force\": true,
+                                    \"clearCache\": true
                                 }'
                                 """
+
                             }
                         }
                     }
