@@ -47,11 +47,21 @@ pipeline {
 stage('Deploy to Render') {
             steps {
                 script {
-                    // Utiliser l'échappement complet des guillemets pour le JSON
-                    sh "curl -X POST 'https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys' " +
-                       "-H 'Authorization: Bearer ${RENDER_API_TOKEN}' " +
-                       "-H 'Content-Type: application/json' " +
-                       "-d '{\"force\": true, \"clearCache\": true}'"
+                    // Définir le JSON dans une variable d'environnement pour éviter tout problème d'interpolation
+                    env.JSON_PAYLOAD = '''{
+                        "force": true,
+                        "clearCache": true
+                    }'''
+
+                    // Utiliser un bloc withEnv pour insérer les tokens et autres variables de manière sécurisée
+                    withEnv(["AUTH_HEADER=Bearer ${RENDER_API_TOKEN}", "CONTENT_TYPE=application/json", "JSON_PAYLOAD=${env.JSON_PAYLOAD}"]) {
+                        sh '''
+                        curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+                        -H "Authorization: ${AUTH_HEADER}" \
+                        -H "Content-Type: ${CONTENT_TYPE}" \
+                        -d "$JSON_PAYLOAD"
+                        '''
+                    }
                 }
             }
         }
