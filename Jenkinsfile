@@ -43,14 +43,15 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    echo "Déploiement de l'application"
-                    // Insérez vos commandes de déploiement ici
+            stage('Deploy') {
+                steps {
+                    script {
+                        // Exemple de commande CLI pour déployer sur Render, adaptez selon votre configuration
+                        sh 'render deploy -s service-id -t $RENDER_API_TOKEN'
+                    }
                 }
             }
-        }
+
     }
 
     post {
