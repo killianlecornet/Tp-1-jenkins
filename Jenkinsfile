@@ -7,8 +7,7 @@ pipeline {
         IMAGE_NAME = "website-karma"
         IMAGE_TAG = "latest"
         DOCKERHUB_PASSWORD = "${DOCKERHUB_PASSWORD_PSW}"
-        RENDER_API_TOKEN = credentials('render_api_token') // Assurez-vous d'ajouter ceci dans Jenkins Credentials
-        SERVICE_ID = "votre_service_id_render" // Remplacez ceci par l'ID de votre service sur Render
+        RENDER_API_TOKEN = credentials('RENDER_API_TOKEN')
     }
 
     triggers {
