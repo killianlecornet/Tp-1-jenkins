@@ -43,19 +43,20 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Render') {
-            steps {
-                script {
-                    // Assurez-vous que les guillemets sont correctement échappés
-                    sh """
-                    curl -X POST 'https://api.render.com/v1/services/${env.RENDER_SERVICE_ID}/deploys' \\
-                    -H 'Authorization: Bearer \${RENDER_API_TOKEN}' \\
-                    -H 'Content-Type: application/json' \\
-                    -d '{\\"force\\": true, \\"clearCache\\": true}'
-                    """
+            stage('Deploy to Render') {
+                steps {
+                    script {
+                        // Utilisation de single quotes pour empêcher l'évaluation de Groovy sur la variable d'environnement
+                        sh '''
+                        curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+                        -H "Authorization: Bearer ${RENDER_API_TOKEN}" \
+                        -H "Content-Type: application/json" \
+                        -d '{"force": true, "clearCache": true}'
+                        '''
+                    }
                 }
             }
-        }
+
 
     }
 
