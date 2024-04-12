@@ -9,6 +9,7 @@ pipeline {
         DOCKERHUB_PASSWORD = "${DOCKERHUB_PASSWORD_PSW}"
         RENDER_API_TOKEN = credentials('RENDER_API_TOKEN')
         RENDER_SERVICE_ID = "srv-cockhsa1hbls73csl2o0"
+        RENDER_DEPLOY_HOOK_URL_TP1 = credentials('RENDER_DEPLOY_HOOK_URL_TP1')
     }
 
     triggers {
@@ -44,23 +45,13 @@ pipeline {
             }
         }
 
-stage('Deploy to Render') {
+        stage('Trigger Deploy to Render') {
             steps {
-                script {
-                    // Définir le JSON dans une variable d'environnement pour éviter tout problème d'interpolation
-                    env.JSON_PAYLOAD = '''{
-                        "force": true,
-                        "clearCache": true
-                    }'''
-
-                    // Utiliser un bloc withEnv pour insérer les tokens et autres variables de manière sécurisée
-                    withEnv(["AUTH_HEADER=Bearer ${RENDER_API_TOKEN}", "CONTENT_TYPE=application/json", "JSON_PAYLOAD=${env.JSON_PAYLOAD}"]) {
-                        sh '''
-                        curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
-                        -H "Authorization: ${AUTH_HEADER}" \
-                        -H "Content-Type: ${CONTENT_TYPE}" \
-                        -d "$JSON_PAYLOAD"
-                        '''
+                // Utilisez withCredentials pour accéder à l'URL du webhook de manière sécurisée
+                withCredentials([string(credentialsId: 'RENDER_DEPLOY_HOOK_URL_TP1', variable: 'DEPLOY_HOOK_URL')]) {
+                    script {
+                        // Envoi d'une requête POST au webhook de déploiement
+                        sh "curl -X POST ${DEPLOY_HOOK_URL}"
                     }
                 }
             }
