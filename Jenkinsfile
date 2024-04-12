@@ -46,25 +46,21 @@ pipeline {
         stage('Deploy to Render') {
             steps {
                 script {
-                    // Créer un fichier JSON temporaire pour le corps de la requête
-                    writeFile file: 'payload.json', text: """
-                    {
+                    // Écriture du fichier JSON en utilisant des simples quotes pour éviter l'interpolation de Groovy
+                    writeFile file: 'payload.json', text: '''{
                         "force": true,
                         "clearCache": true
-                    }
-                    """
-                    // Utiliser le fichier JSON dans la commande curl
-                    sh """
-                    curl -X POST 'https://api.render.com/v1/services/${env.RENDER_SERVICE_ID}/deploys' \\
-                    -H 'Authorization: Bearer ${RENDER_API_TOKEN}' \\
-                    -H 'Content-Type: application/json' \\
-                    -d @payload.json
-                    """
-                    // Nettoyer le fichier temporaire après utilisation
-                    sh "rm -f payload.json"
+                    }'''
+
+                    // Utilisation du fichier JSON dans la commande curl
+                    sh 'curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" ' +
+                    '-H "Authorization: Bearer ${RENDER_API_TOKEN}" ' +
+                    '-H "Content-Type: application/json" ' +
+                    '-d @payload.json'
                 }
             }
         }
+
 
 
 
