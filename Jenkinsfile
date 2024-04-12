@@ -9,6 +9,12 @@ pipeline {
         DOCKERHUB_PASSWORD = "${DOCKERHUB_PASSWORD_PSW}"
     }
 
+    triggers {
+        // Vérifie le dépôt pour des changements toutes les 5 minutes
+        // pollSCM('H/5 * * * *')
+        githubPush()
+    }
+
     stages {
         stage('Build image') {
             steps {
@@ -39,7 +45,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            // Adaptez cette étape selon votre cible de déploiement (Heroku, Render, etc.)
             steps {
                 script {
                     echo "Déploiement de l'application"
@@ -51,13 +56,11 @@ pipeline {
 
     post {
         success {
-            // Envoyer une notification par email en cas de succès
             mail to: 'killian.lecornet@ynov.com',
                  subject: "Succès du Pipeline ${env.JOB_NAME} ${env.BUILD_NUMBER}",
                  body: "Le pipeline a réussi. L'application a été déployée."
         }
         failure {
-            // Envoyer une notification par email en cas d'échec
             mail to: 'killian.lecornet@ynov.com',
                  subject: "Échec du Pipeline ${env.JOB_NAME} ${env.BUILD_NUMBER}",
                  body: "Le pipeline a échoué. Veuillez vérifier Jenkins pour plus de détails."
