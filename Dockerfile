@@ -1,28 +1,11 @@
-#Grab the latest alpine imag
-FROM python:3.13.0a2-alpine
+# Utiliser Nginx comme image de base
+FROM nginx:alpine
 
-# Install python and pip
-RUN apk add --no-cache --update python3 py3-pip bash
-ADD ./website_karma-main/requirements.txt /tmp/requirements.txt
+# Copier les fichiers statiques dans le dossier de Nginx pour les servir
+COPY ./website_karma-main /usr/share/nginx/html
 
-# Create a virtual environment and activate it
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Exposer le port 80 pour le trafic HTTP
+EXPOSE 80
 
-# Install dependencies
-RUN pip install --no-cache-dir -q -r /tmp/requirements.txt
-
-# Add our code
-ADD ./website_karma-main /opt/website_karma-main/
-WORKDIR /opt/website_karma-main
-
-# Expose is NOT supported by Heroku
-# EXPOSE 5000         
-
-# Run the image as a non-root user
-RUN adduser -D myuser
-USER myuser
-
-# Run the app.  CMD is required to run on Heroku
-# $PORT is set by Heroku            
-CMD gunicorn --bind 0.0.0.0:$PORT wsgi
+# Utiliser le fichier de configuration par défaut de Nginx
+# Aucun CMD requis car nous utilisons le CMD par défaut de l'image nginx qui lance Nginx
